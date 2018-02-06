@@ -10,7 +10,7 @@ function Loader(props) {
   const imageStyle = props.style || {};
 
   return (
-    <div style={{ ...style }} class="market-loader">
+    <div style={{ ...style }} className="market-loader">
       <img alt="Market Loader" src={splash} style={{ ...imageStyle }} />
     </div>
   );

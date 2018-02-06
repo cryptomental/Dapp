@@ -5,7 +5,10 @@ import { withRouter } from 'react-router';
 class NavItem extends Component {
   render () {
     const { location, to, children } = this.props;
-    let isActive  = location.pathname === to;
+
+    // Sim Exchange wouldn't be `active` in case of it's sub-routes as it'll fail the equality check
+    // of the `location.pathname` and `to`
+    let isActive  = location.pathname.indexOf(to) === 0;
 
     return (
       <li className={isActive ? 'ant-menu-item ant-menu-item-selected' : 'ant-menu-item'}>
