@@ -2,14 +2,10 @@ import React, { Component } from 'react';
 import {
   Layout,
   Row,
-  Col,
   Tabs,
-  Select,
   Table,
   Popover,
   Button,
-  Icon,
-  Form,
   Input,
   Card,
 } from 'antd';
