@@ -8,19 +8,25 @@ import bids from './data/bids';
 import '../TradeList.css';
 
 class TradeList extends Component {
-  render() {
-    const rowSelection = {
-      type: 'radio',
-      onSelect: (selectedRowKeys) => {
-        this.props.onTradeSelect(selectedRowKeys);
-      },
-    };
+  constructor() {
+    super();
 
+    this.onRowClick = this.onRowClick.bind(this);
+  }
+
+  onRowClick(record) {
+    console.log(record);
+    this.props.onTradeSelect(record);
+  }
+
+  render() {
     return (
       <Row type="flex" justify="center" gutter={24}>
         <Col span={12}>
           <Table
-            rowSelection={rowSelection}
+            onRow={(record) => ({
+              onClick: () => this.onRowClick(record)
+            })}
             pagination={false}
             title={() => 'Asks'}
             size="small"
@@ -29,7 +35,9 @@ class TradeList extends Component {
         </Col>
         <Col span={12}>
           <Table
-            rowSelection={rowSelection}
+            onRow={(record) => ({
+              onClick: () => this.onRowClick(record)
+            })}
             pagination={false}
             title={() => 'Bids'}
             size="small"
