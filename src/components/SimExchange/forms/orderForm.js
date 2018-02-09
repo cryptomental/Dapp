@@ -11,29 +11,34 @@ const OrderForm = Form.create({
   mapPropsToFields(props) {
     return {
       amount: Form.createFormField({
-        value: props.amount.value,
+        value: props.trade.amount,
       }),
       price: Form.createFormField({
-        value: props.price.value,
+        value: props.trade.price,
       }),
       total: Form.createFormField({
-        value: props.total.value,
+        value: props.trade.total,
       }),
       market: Form.createFormField({
-        value: props.market.value,
+        value: props.market,
+      }),
+      type: Form.createFormField({
+        value: props.type,
       }),
     };
   },
 })((props) => {
-  const { form, type, showModal, onSubmit } = props;
-  const { getFieldDecorator } = form;
+  const { form, label, showModal, onSubmit } = props;
+  const { getFieldDecorator, getFieldProps } = form;
+  const market = getFieldProps('market');
+  const type = getFieldProps('type');
 
   const handleSubmit = (e) => {
     e.preventDefault();
     form.validateFields((err, values) => {
       if (!err) {
         showModal();
-        onSubmit({...values, market: props.market.value});
+        onSubmit({...values, market: market.value, type: type.value});
       }
     });
   };
@@ -57,7 +62,7 @@ const OrderForm = Form.create({
       </FormItem>
       <FormItem>
         <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-          { type }
+          { label }
         </Button>
       </FormItem>
     </Form>

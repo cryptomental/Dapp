@@ -13,7 +13,8 @@ class Trades extends Component {
     super(props);
 
     this.state = {
-      trade: {}
+      trade: {},
+      market: 'ETX'
     };
 
     this.tradeSelection = this.tradeSelection.bind(this);
@@ -30,7 +31,7 @@ class Trades extends Component {
       <Layout style={{ background: '#FFF' }}>
         <Content style={{ background: '#FFF' }}>
           <div className="tradeForm-container">
-            <TradeForm trade={trade} />
+            <TradeForm market={this.state.market} trade={trade} />
           </div>
           <TradeList onTradeSelect={this.tradeSelection} />
         </Content>

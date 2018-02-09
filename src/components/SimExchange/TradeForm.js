@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 
 import {
   Row,
@@ -20,36 +21,10 @@ class TradeForm extends Component {
 
     this.state = {
       modal: false,
-      trade: {},
-      fields: {
-        ask: {
-          amount: {
-            value: '',
-          },
-          price: {
-            value: '',
-          },
-          total: {
-            value: '',
-          },
-          market: {
-            value: '',
-          }
-        },
-        bid: {
-          amount: {
-            value: '',
-          },
-          price: {
-            value: '',
-          },
-          total: {
-            value: '',
-          },
-          market: {
-            value: '',
-          }
-        }
+      selectedTrade: {},
+      trade: {
+        ask: {},
+        bid: {}
       },
     };
 
@@ -60,18 +35,13 @@ class TradeForm extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    let fields = this.state.fields;
-
-    if (this.props.trade.value !== nextProps.trade.amount) {
-      fields[nextProps.trade.type] = {
-        amount: { value: nextProps.trade.amount },
-        price: { value: nextProps.trade.price },
-        total: { value: nextProps.trade.total },
-        market: { value: nextProps.trade.market },
-      };
+    let trade = this.state.trade;
+    
+    if (this.props.trade.amount !== nextProps.trade.amount) {
+      trade[nextProps.trade.type] = nextProps.trade;
     }
 
-    this.setState({ fields });
+    this.setState({ trade });
   }
 
   showModal() {
@@ -86,20 +56,29 @@ class TradeForm extends Component {
     this.setState({ modal: false });
   }
 
-  onSubmit(trade) {
-    this.setState({ trade });
+  onSubmit(record) {
+    let trade = this.state.trade;
+    trade[record.type] = record;
+
+    this.setState({ 
+      selectedTrade: record,
+      trade,
+    });
   }
 
   render() {
-    const { fields, trade } = this.state;
+    const { market } = this.props;
+    const { trade, selectedTrade } = this.state;
 
     return (
        <Row type="flex" justify="space-around" gutter={24}>
         <Col span={12}>
           <Card title="Buy ETX">
             <OrderForm
-              type="Buy"
-              {...fields.ask}
+              label="Buy"
+              type="ask"
+              trade={trade.ask}
+              market={market}
               showModal={this.showModal} 
               onSubmit={this.onSubmit} />
           </Card>
@@ -107,8 +86,10 @@ class TradeForm extends Component {
         <Col span={12}>
           <Card title="Sell ETX">
             <OrderForm
-              type="Sell"
-              {...fields.bid}
+              label="Sell"
+              trade={trade.bid}
+              type="bid"
+              market={market}
               showModal={this.showModal}
               onSubmit={this.onSubmit} />
           </Card>
@@ -120,10 +101,11 @@ class TradeForm extends Component {
           onCancel={this.handleCancel}>
           <h3>Are you sure you want to buy {trade.amount} {trade.market} at {trade.price} ETX/ETH for a maximum of {trade.total} ETH?</h3>
           <Table
+            rowKey={() => _.uniqueId('row')}
             pagination={false}
             size="small"
             columns={columns}
-            dataSource={[trade]}>
+            dataSource={[selectedTrade]}>
           </Table>
         </Modal>
       </Row>

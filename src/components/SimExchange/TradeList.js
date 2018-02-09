@@ -15,7 +15,6 @@ class TradeList extends Component {
   }
 
   onRowClick(record) {
-    console.log(record);
     this.props.onTradeSelect(record);
   }
 
