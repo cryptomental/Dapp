@@ -1,39 +1,25 @@
 import React, { Component } from 'react';
-import { Layout } from 'antd';
+import { Layout, Row, Col } from 'antd';
 
-import TradeList from './TradeList';
-import TradeForm from './TradeForm';
+import TradeContainer from './TradeContainer';
 
 import './Trades.css';
 
 const { Content } = Layout;
 
 class Trades extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      trade: {},
-      market: 'ETX'
-    };
-
-    this.tradeSelection = this.tradeSelection.bind(this);
-  }
-
-  tradeSelection(trade) {
-    this.setState({ trade });
-  }
-
   render() {
-    const { trade } = this.state;
-
     return (
       <Layout style={{ background: '#FFF' }}>
         <Content style={{ background: '#FFF' }}>
-          <div className="tradeForm-container">
-            <TradeForm market={this.state.market} trade={trade} />
-          </div>
-          <TradeList onTradeSelect={this.tradeSelection} />
+          <Row type="flex" justify="space-around" gutter={24}>
+            <Col span={12}>
+              <TradeContainer title="ask" market="ETX" />
+            </Col>
+            <Col span={12}>
+              <TradeContainer title="bid" market="ETX" />
+            </Col>
+          </Row>
         </Content>
       </Layout>
     );
