@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
-import Form from './buy/form';
-import Table from './buy/table';
+import Form from './TradeComponents/form';
+import Table from './TradeComponents/table';
 import _ from 'lodash';
 
 import {
