@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 
-import store from '../store';
+import store from '../src/store';
 
 /**
  * Helper to test components that need the redux provider

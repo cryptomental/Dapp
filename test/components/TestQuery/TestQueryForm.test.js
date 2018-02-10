@@ -1,19 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import enzyme, { shallow } from 'enzyme';
-import Adapter from 'enzyme-adapter-react-16';
+import { shallow } from 'enzyme';
 import { Steps } from 'antd';
 import { expect } from 'chai';
 
-import TestQueryForm from '../../../components/TestQuery/TestQueryForm';
+import TestQueryForm from '../../../src/components/TestQuery/TestQueryForm';
 import {
   AboutOraclesStep,
   QueryResultStep,
   SelectDataSourceStep,
   SetQueryStep
-} from '../../../components/TestQuery/Steps';
-
-enzyme.configure({ adapter: new Adapter() });
+} from '../../../src/components/TestQuery/Steps';
 
 describe('TestQueryForm', () => {
   let testQueryForm;
