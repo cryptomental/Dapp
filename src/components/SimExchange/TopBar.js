@@ -18,9 +18,9 @@ class TopBar extends Component {
   render() {
     return (
       <div>
-        <Row>
-          <Col span={8}>Last Price: 0.00453143 ETH</Col>
-          <Col span={8} offset={8}>
+        <Row type="flex" justify="space-between" gutter={24}>
+          <Col span={12}>Last Price: 0.00453143 ETH</Col>
+          <Col span={12}>
             <Dropdown overlay={menu}>
               <Button style={{ marginLeft: 8 }}>
                 Account <Icon type="down" />
