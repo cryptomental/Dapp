@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 
 import { Tabs, Card, Row, Modal } from 'antd';
 
-import SingleForm from './forms/single';
-import DoubleForm from './forms/double';
+import Form from './Form';
 
 import './header-menu.css';
 
@@ -47,27 +46,9 @@ class HeaderMenu extends Component {
     return (
       <Row gutter={24} className="header-menu">
         <Tabs tabPosition='left'>
-          <TabPane tab="Deposit ETX" key="1">
-            <Card title="Deposit ETX">
-              <SingleForm
-                onSubmit={this.onSubmit}
-                showModal={this.showModal}
-                type="deposit" 
-                amount={amount} />
-            </Card>
-          </TabPane>
-          <TabPane tab="Withdraw ETX" key="2">
-            <Card title="Withdraw ETX">
-              <SingleForm
-                onSubmit={this.onSubmit}
-                showModal={this.showModal}
-                type="withdraw"
-                amount={amount} />
-            </Card>
-          </TabPane>
           <TabPane tab="Send ETX" key="3">
             <Card title="Send ETX">
-              <DoubleForm
+              <Form
                 onSubmit={this.onSubmit}
                 showModal={this.showModal}
                 type="Send"
@@ -76,7 +57,7 @@ class HeaderMenu extends Component {
           </TabPane>
           <TabPane tab="Send ETH" key="4">
             <Card title="Send ETH">
-              <DoubleForm
+              <Form
                 onSubmit={this.onSubmit}
                 showModal={this.showModal}
                 type="Send"

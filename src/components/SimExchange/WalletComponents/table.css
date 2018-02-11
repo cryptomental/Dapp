@@ -1,27 +1,9 @@
-.time-group {
-  text-align: right;
-}
-
 .table-header {
   margin-bottom: 1em;
 }
 
 .table-header-title {
   margin-bottom: 0;
-}
-
-.slider-wrapper {
-  align-items: center;
-  display: flex;
-}
-
-.slider-wrapper .ant-slider {
-  flex: 1;
-  margin: 0 20px;
-}
-
-.slider-wrapper span {
-  display: inline-block;
 }
 
 .details {
