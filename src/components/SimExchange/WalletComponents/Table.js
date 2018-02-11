@@ -3,18 +3,12 @@ import React, { Component, Fragment } from 'react';
 import {
   Table, 
   Row,
-  Col,
-  Slider,
-  Radio,
 } from 'antd';
 
 import columns from './columns';
 import wallet from '../data/wallet';
 
 import './table.css';
-
-const RadioButton = Radio.Button;
-const RadioGroup = Radio.Group;
 
 class BuyTable extends Component {
   constructor() {
