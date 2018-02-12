@@ -4,10 +4,11 @@ import { Table } from 'antd';
 
 import columns from '../columns';
 import asks from '../data/asks';
+import bids from '../data/bids';
 
 import './table.css';
 
-class BuyTable extends Component {
+class OrdersTable extends Component {
   constructor() {
     super();
 
@@ -27,10 +28,10 @@ class BuyTable extends Component {
         pagination={false}
         title={() => this.props.title}
         size="small"
-        dataSource={asks} 
+        dataSource={this.props.title === 'asks' ? asks : bids}
         columns={columns} />
     );
   }
-};
+}
 
-export default BuyTable;
+export default OrdersTable;

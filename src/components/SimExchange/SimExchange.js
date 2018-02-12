@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Layout, Menu } from 'antd';
-import {Route, Redirect, Switch, withRouter} from 'react-router';
+import { Route, Redirect, Switch, withRouter } from 'react-router';
 import { Link } from 'react-router-dom';
+
 import TopBar from "./TopBar";
 import Trades from "./Trades";
 import Wallet from "./Wallet";
@@ -9,13 +10,29 @@ import Wallet from "./Wallet";
 const { Content, Header, Sider } = Layout;
 
 class SimExchange extends Component {
+  componentWillMount() {
+    if (!this.props.contracts) {
+      this.props.getContracts();
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.contracts && !nextProps.contract) {
+      this.props.selectContract(nextProps.contracts[0]);
+    }
+  }
+
   render() {
-    const { location } = this.props;
+    const { contract, contracts, location } = this.props;
 
     return (
       <Layout>
         <Header style={{ paddingLeft: '224px', background: '#fff'}}>
-          <TopBar/>
+          <TopBar
+            contract={contract}
+            contracts={contracts}
+            onSelectContract={this.props.selectContract}
+          />
         </Header>
         <Layout style={{ background: '#fff' }}>
           <Sider style={{ background: '#fff' }} width={200}>
@@ -35,7 +52,11 @@ class SimExchange extends Component {
           <Content style={{ padding: '0 24px', minHeight: 250 }}>
             <Switch>
               <Route path="/:url*" exact strict render={props => <Redirect to={`${props.location.pathname}/`}/>}/>
-              <Route path="/exchange/trades/" exact component={Trades} />
+              <Route
+                path="/exchange/trades/"
+                exact
+                render={() => <Trades tradeOrder={this.props.tradeOrder} /> }
+              />
               <Route path="/exchange/wallet/" exact component={Wallet} />
               <Redirect to="/exchange/trades/" />
             </Switch>

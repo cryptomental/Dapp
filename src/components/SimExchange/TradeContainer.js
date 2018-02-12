@@ -43,6 +43,7 @@ class Buy extends Component {
   }
 
   handleOk() {
+    this.props.tradeOrder(this.state.order);
     this.setState({ modal: false });
   }
 
@@ -65,14 +66,14 @@ class Buy extends Component {
             order={order} />
           </div>
 
-          <Table 
+          <Table
             title={`${this.props.title}s`}
             onRowSelect={this.onRowSelect} />
 
           <Modal
             title="Confirmation required"
             visible={this.state.modal}
-            onOk={this.handleOk} 
+            onOk={this.handleOk}
             onCancel={this.handleCancel}>
             <h3>Are you sure you want to {title} {order.amount} {order.market} at {order.price} ETX/ETH for a maximum of {order.total} ETH?</h3>
             <AntTable
@@ -90,4 +91,3 @@ class Buy extends Component {
 }
 
 export default Buy;
-  

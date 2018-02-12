@@ -30,17 +30,13 @@ export function loadContracts() {
       let marketContractRegistryInstance;
       marketContractRegistry.deployed().then(function(instance) {
         marketContractRegistryInstance = instance;
-        console.log('Found the Market Contract Registry at' + instance.address);
 
         // Attempt to find deployed contracts and get metadata
         marketContractRegistryInstance.getAddressWhiteList
           .call()
           .then(function(deployedContracts) {
-            console.log('Found ' + deployedContracts.length + ' contracts deployed');
-
             processContractsList(deployedContracts, marketContract, marketCollateralPool)
               .then(function (data) {
-                console.log('Dispatch Contracts');
                 dispatch({ type: `${type}_FULFILLED`, payload: data });
               });
           });

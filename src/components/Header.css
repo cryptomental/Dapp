@@ -31,3 +31,7 @@
   line-height: 64px;
   margin-right: 50px;
 }
+
+.ant-menu-item-selected {
+  pointer-events: none;
+}

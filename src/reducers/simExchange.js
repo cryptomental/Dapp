@@ -1,21 +1,23 @@
 export default function reducer(
   state = {
-    trades: null,
-    loading: false,
     error: null,
+    loading: false,
+    contract: null,
+    trades: null,
   },
   action,
 ) {
-  const actionType = 'GET_TRADES';
+  const tradeOrderAction = 'TRADE_ORDER';
+
   switch (action.type) {
-    case `${actionType}_PENDING`:
+    case `${tradeOrderAction}_PENDING`:
       return {
         ...state,
         loading: true,
         error: null,
       };
 
-    case `${actionType}_FULFILLED`:
+    case `${tradeOrderAction}_FULFILLED`:
       return {
         ...state,
         loading: false,
@@ -23,12 +25,18 @@ export default function reducer(
         error: null,
       };
 
-    case `${actionType}_REJECTED`:
+    case `${tradeOrderAction}_REJECTED`:
       return {
         ...state,
         loading: false,
         trades: null,
         error: action.payload,
+      };
+
+    case 'SELECTED_CONTRACT':
+      return {
+        ...state,
+        contract: action.payload
       };
 
     default:
