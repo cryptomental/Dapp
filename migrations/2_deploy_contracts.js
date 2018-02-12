@@ -30,7 +30,11 @@ module.exports = function(deployer, network) {
 
     const marketTokenToLockForTrading = 0;    // for testing purposes, require no lock
     const marketTokenAmountForContractCreation = 0;   //for testing purposes require no balance
-    const marketContractExpiration = Math.floor(Date.now() / 1000) + 60 * 15; // expires in 15 minutes.
+    const daysToExpiration = 28;
+    const marketContractExpiration = Math.floor(Date.now() / 1000) + 86400 * daysToExpiration; // expires in 28 days
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + daysToExpiration);
+    const expirationString = expirationDate.toISOString().substring(0,10);
 
     // deploy primary instance of market contract
     deployer.deploy(
@@ -38,22 +42,24 @@ module.exports = function(deployer, network) {
       marketTokenToLockForTrading,
       marketTokenAmountForContractCreation
     ).then(function () {
-      return deployer.deploy(CollateralToken).then(function () {
+      return deployer.deploy(CollateralToken, "FakeDollars", "FUSD", 1e+9, 18).then(function () {
         let gasLimit = 6200000;  // gas limit for development network
         let block = web3.eth.getBlock("latest");
         if (block.gasLimit > 7000000) {  // coverage network
           gasLimit = block.gasLimit;
         }
+
+        let quickExpirationTimeStamp =  Math.floor(Date.now() / 1000) + 60 * 60; // expires in an hour
         return deployer.deploy(
           MarketContractOraclize,
-          "ETHXBT",
+          "ETHUSD_" + new Date().toISOString().substring(0, 10),
           MarketToken.address,
           CollateralToken.address,
-          [20155, 60465, 2, 10, marketContractExpiration],
+          [50000, 150000, 2, 1e+18, quickExpirationTimeStamp],
           "URL",
           "json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD).result.XETHZUSD.c.0",
-          120,
-          {gas: gasLimit, value: web3.toWei('.2', 'ether'), from: web3.eth.accounts[0]}
+          600,
+          {gas: gasLimit, value: web3.toWei('.1', 'ether'), from: web3.eth.accounts[0]}
         )
       }).then(function () {
         return deployer.deploy(
@@ -70,37 +76,90 @@ module.exports = function(deployer, network) {
         instance.addAddressToWhiteList(MarketContractOraclize.address);
       });
     }).then(async function() {
-      // we are just going to deploy several MARKET contracts here in order to create needed design elements
-      // in our DApp.
-      const gasLimit = 6200000;  // gas limit for development network
+      // we want to create a few basic contracts to allow users to use the simulated trading experience
+      // as well as for testing some of the needed visual elements
+      const gasLimit = 6200000;
       await MarketToken.deployed();
       await CollateralToken.deployed();
       let marketContractRegistry = await MarketContractRegistry.deployed();
-      let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-      for (let i = 0; i < 3; i++) {
-        let contractName = alphabet[i % alphabet.length] + "-ETHXBT-" + i; // create unique name for UI testing
-        let expirationTimeStamp = Math.floor(Date.now() / 1000) + 60 * 15 * (i+1);
-        console.log("Deploying test contract " + contractName);
-        let deployedMarketContract = await MarketContractOraclize.new(
-          contractName,
-          MarketToken.address,
-          CollateralToken.address,
-          [20155 + i, 60465 + i * 2, 2, 10, expirationTimeStamp],
-          "URL",
-          "json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD).result.XETHZUSD.c.0",
-          3600,
-          {gas: gasLimit, value: web3.toWei('.3', 'ether'), from: web3.eth.accounts[0]}
-        );
 
-        let deployedCollateralPool = await MarketCollateralPool.new(
-          deployedMarketContract.address
-        );
+      let deployedMarketContract = await MarketContractOraclize.new(
+        "ETHUSD_" + expirationString,
+        MarketToken.address,
+        CollateralToken.address,
+        [50000, 150000, 2, 1e+18, marketContractExpiration],
+        "URL",
+        "json(https://api.kraken.com/0/public/Ticker?pair=ETHUSD).result.XETHZUSD.c.0",
+        86400,
+        {gas: gasLimit, value: web3.toWei('.2', 'ether'), from: web3.eth.accounts[0]}
+      );
 
-        await deployedMarketContract.setCollateralPoolContractAddress(
-          deployedCollateralPool.address
-        );
-        await marketContractRegistry.addAddressToWhiteList(deployedMarketContract.address);
-      } // end for loop
+      let deployedCollateralPool = await MarketCollateralPool.new(
+        deployedMarketContract.address
+      );
+      await deployedMarketContract.setCollateralPoolContractAddress(
+        deployedCollateralPool.address
+      );
+      await marketContractRegistry.addAddressToWhiteList(deployedMarketContract.address);
+
+      deployedMarketContract = await MarketContractOraclize.new(
+        "BTCUSD_" + expirationString,
+        MarketToken.address,
+        CollateralToken.address,
+        [500000, 2000000, 2, 1e+18, marketContractExpiration],
+        "URL",
+        "json(https://api.kraken.com/0/public/Ticker?pair=XBTUSD).result.XXBTZUSD.c.0",
+        86400,
+        {gas: gasLimit, value: web3.toWei('.3', 'ether'), from: web3.eth.accounts[0]}
+      );
+
+      deployedCollateralPool = await MarketCollateralPool.new(
+        deployedMarketContract.address
+      );
+      await deployedMarketContract.setCollateralPoolContractAddress(
+        deployedCollateralPool.address
+      );
+      await marketContractRegistry.addAddressToWhiteList(deployedMarketContract.address);
+
+      deployedMarketContract = await MarketContractOraclize.new(
+        "LTCUSD_" + expirationString,
+        MarketToken.address,
+        CollateralToken.address,
+        [7500, 20000, 2, 1e+18, marketContractExpiration],
+        "URL",
+        "json(https://api.kraken.com/0/public/Ticker?pair=LTCUSD).result.XLTCZUSD.c.0",
+        86400,
+        {gas: gasLimit, value: web3.toWei('.3', 'ether'), from: web3.eth.accounts[0]}
+      );
+
+      deployedCollateralPool = await MarketCollateralPool.new(
+        deployedMarketContract.address
+      );
+      await deployedMarketContract.setCollateralPoolContractAddress(
+        deployedCollateralPool.address
+      );
+      await marketContractRegistry.addAddressToWhiteList(deployedMarketContract.address);
+
+
+      deployedMarketContract = await MarketContractOraclize.new(
+        "BCHUSD_" + expirationString,
+        MarketToken.address,
+        CollateralToken.address,
+        [50000, 200000, 2, 1e+18, marketContractExpiration],
+        "URL",
+        "json(https://api.kraken.com/0/public/Ticker?pair=BCHUSD).result.BCHUSD.c.0",
+        86400,
+        {gas: gasLimit, value: web3.toWei('.3', 'ether'), from: web3.eth.accounts[0]}
+      );
+
+      deployedCollateralPool = await MarketCollateralPool.new(
+        deployedMarketContract.address
+      );
+      await deployedMarketContract.setCollateralPoolContractAddress(
+        deployedCollateralPool.address
+      );
+      await marketContractRegistry.addAddressToWhiteList(deployedMarketContract.address);
+
     });
   }
 };

@@ -1,21 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Button, Select } from 'antd';
-import enzyme, { shallow } from 'enzyme';
+import { shallow } from 'enzyme';
 import sinon from 'sinon';
 import { expect } from 'chai';
-import Adapter from 'enzyme-adapter-react-16';
 
-import DataSources from '../../../components/TestQuery/OracleDataSources';
-import Loader from '../../../components/Loader';
+import DataSources from '../../../src/components/TestQuery/OracleDataSources';
+import Loader from '../../../src/components/Loader';
 import {
   AboutOraclesStep,
   QueryResultStep,
   SelectDataSourceStep,
   SetQueryStep
-} from '../../../components/TestQuery/Steps';
-
-enzyme.configure({ adapter: new Adapter() });
+} from '../../../src/components/TestQuery/Steps';
 
 const Option = Select.Option;
 

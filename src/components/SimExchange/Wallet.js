@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import { Layout } from 'antd';
 
+import HeaderMenu from './WalletComponents/HeaderMenu';
+import Table from './WalletComponents/Table';
+
 const { Content } = Layout;
 
 class Wallet extends Component {
@@ -8,7 +11,8 @@ class Wallet extends Component {
     return (
       <Layout style={{ background: '#FFF' }}>
         <Content style={{ background: '#FFF' }}>
-          Wallet
+          <HeaderMenu />
+          <Table />
         </Content>
       </Layout>
     );
