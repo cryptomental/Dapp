@@ -48,6 +48,14 @@ export function deployContract(
         marketToken
           .deployed()
           .then(function(marketTokenInstance) {
+            console.log(marketTokenInstance);
+            let wnonce = 0;
+            web3.eth.getTransactionCount(coinbase, function(error, result){
+            if(!error)
+                wnonce = result;
+            else
+                console.error(error);
+            });
             return marketContract.new(
               contractSpecs.contractName,
               marketTokenInstance.address,
@@ -57,15 +65,18 @@ export function deployContract(
               contractSpecs.oracleQuery,
               contractSpecs.oracleQueryRepeatSeconds,
               {
-                gas: 6500000, // TODO : Remove hard-coded gas
-                value: web3.toWei('.2', 'ether'),
-                gasPrice: web3.toWei(1, 'gwei'),
-                from: coinbase
+                gas: 6385876, // TODO : Remove hard-coded gas
+                value: web3.toWei('.05', 'ether'),
+                gasPrice: web3.toWei(0.1, 'gwei'),
+                from: coinbase,
+                nonce: wnonce
               }
             );
           })
           .then(function(marketContractInstance) {
             marketContractInstanceDeployed = marketContractInstance;
+            console.log("Deployed Market Contract instance");
+            console.log(marketContractInstanceDeployed);
             return marketCollateralPool.new(marketContractInstance.address, {
               gas: 5100000,
               gasPrice: web3.toWei(1, 'gwei'),
@@ -73,6 +84,8 @@ export function deployContract(
             });
           })
           .then(function(marketCollateralPoolInstance) {
+            console.log("marketCollateralPoolInstance");
+            console.log(marketCollateralPoolInstance);
             return marketContractInstanceDeployed.setCollateralPoolContractAddress(
               marketCollateralPoolInstance.address, {
                 from: coinbase,
@@ -80,21 +93,29 @@ export function deployContract(
               }
             );
           })
-          .then(function() {
+          .then(function(result) {
+            console.log("setCollateralPoolContractAddress");
+            console.log(result);
             return marketContractRegistry.deployed();
           })
           .then(function(marketContractRegistryInstance) {
+            console.log("marketContractRegistryInstance");
+            console.log(marketContractRegistryInstance);
             marketContractRegistryInstance.addAddressToWhiteList(
               marketContractInstanceDeployed.address,
               {
                 from: web3.eth.accounts[0],
                 gasPrice: web3.toWei(1, 'gwei')
               }
-            );
+            ).then(function(result) {
+              console.log("addAddressToWhiteList");
+              console.log(result);
+            });
 
             dispatch({ type: `${type}_FULFILLED`, payload: marketContractInstanceDeployed });
           })
           .catch(err => {
+            console.log(err);
             dispatch({ type: `${type}_REJECTED`, payload: err });
           });
       });
