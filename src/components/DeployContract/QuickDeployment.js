@@ -44,7 +44,7 @@ function ContractFormCol(props) {
 
 /**
  * Component for deploying Contracts Quickly.
- * 
+ *
  */
 class QuickDeployment extends Component {
   componentWillReceiveProps(nextProps) {
@@ -157,6 +157,12 @@ class QuickDeployment extends Component {
 
               <ContractFormCol>
                 <Field name='oracleQueryRepeatSeconds' initialValue={parseInt(initialValues.oracleQueryRepeatSeconds, 10)} form={this.props.form} showHint/>
+              </ContractFormCol>
+            </ContractFormRow>
+
+            <ContractFormRow>
+              <ContractFormCol>
+                <Field name='preFunding' initialValue={parseInt(initialValues.preFunding, 10)} form={this.props.form} showHint/>
               </ContractFormCol>
             </ContractFormRow>
 

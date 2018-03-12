@@ -34,6 +34,13 @@ const priceCapValidator = (form, rule, value, callback) => {
   callback(value >= priceFloor ? undefined : 'Price cap must be greater-than or equal to the price floor');
 };
 
+const preFundingValidator = (form, rule, value, callback) => {
+  const preFunding = form.getFieldValue('preFunding');
+
+  callback(value >= preFunding ? undefined : 'Fre-funding must be higher than the minimum value that allows to cover Oraclize queries.');
+};
+
+
 const oracleQueryValidator = (form, rule, value, callback) => {
   const oracleDataSource = form.getFieldValue('oracleDataSource');
   const oracleQuery = form.getFieldValue('oracleQuery');
@@ -96,7 +103,7 @@ const fieldSettingsByName = {
         }
       ];
     },
-    extra: `The lower bound of price exposure this contract will trade. If the oracle reports a price below this 
+    extra: `The lower bound of price exposure this contract will trade. If the oracle reports a price below this
     value the contract will enter into settlement`,
 
     component: ({ form }) => {
@@ -161,9 +168,9 @@ const fieldSettingsByName = {
         type: 'integer', message: 'Value must be an integer'
       }
     ],
-    extra: `Since all numbers must be represented as integers on the Ethereum blockchain, this is how many 
-    decimal places one needs to move the decimal in order to go from the oracle query price to an integer. 
-    For instance if the oracle query results returned a value such as 190.22, we need to move the 
+    extra: `Since all numbers must be represented as integers on the Ethereum blockchain, this is how many
+    decimal places one needs to move the decimal in order to go from the oracle query price to an integer.
+    For instance if the oracle query results returned a value such as 190.22, we need to move the
     decimal two(2) places to convert to an integer value of 19022.`,
 
     component: () => (<InputNumber min={0} style={{ width: '100%' }} />)
@@ -257,6 +264,41 @@ const fieldSettingsByName = {
     extra: `Number of seconds in between repeating the oracle query.`,
 
     component: () => (<InputNumber min={0} style={{ width: '100%' }}/>)
+  },
+
+  preFunding: {
+    label: 'Pre-Funding',
+    initialValue: 0.1,
+    rules: (form) => {
+      return [
+        {
+          required: true, message: 'Please enter pre-funding [ETH] for the contract.',
+        },
+        {
+          type: 'float', message: 'Value must be an integer'
+        },
+        {
+          validator: (rule, value, callback) => {
+            preFundingValidator(form, rule, value, callback);
+          },
+        }
+      ];
+    },
+    extra: `The contract must be funded to be able to cover cost of Oraclize queries. Price of a single query depends on data source type.`,
+
+    component: ({ form }) => {
+      return (
+        <InputNumber
+          min={0}
+          style={{ width: '100%' }}
+          onChange={() => {
+            setTimeout(() => {
+              form.validateFields(['priceFloor'], { force: true });
+            }, 100);
+          }}
+        />
+      );
+    }
   },
 };
 
