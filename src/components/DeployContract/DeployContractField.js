@@ -268,14 +268,14 @@ const fieldSettingsByName = {
 
   preFunding: {
     label: 'Pre-Funding',
-    initialValue: 0.1,
+    initialValue: 0,
     rules: (form) => {
       return [
         {
           required: true, message: 'Please enter pre-funding [ETH] for the contract.',
         },
         {
-          type: 'float', message: 'Value must be an integer'
+          type: 'integer', message: 'Value must be an integer'
         },
         {
           validator: (rule, value, callback) => {
@@ -293,7 +293,7 @@ const fieldSettingsByName = {
           style={{ width: '100%' }}
           onChange={() => {
             setTimeout(() => {
-              form.validateFields(['priceFloor'], { force: true });
+              form.validateFields(['preFunding'], { force: true });
             }, 100);
           }}
         />

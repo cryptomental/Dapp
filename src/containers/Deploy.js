@@ -22,7 +22,8 @@ const mapDispatchToProps = dispatch => {
         web3: store.getState().web3.web3Instance,
         contractSpecs
       }, Contracts));
-    }
+    },
+
   };
 };
 

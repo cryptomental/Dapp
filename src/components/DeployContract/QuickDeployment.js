@@ -57,6 +57,28 @@ class QuickDeployment extends Component {
         this.props.showSuccessMessage(DeployContractSuccess({ contract: nextProps.contract }), 5);
       }
     }
+    console.log("componentWillReceiveProps");
+    console.log(`Is PreFunding update needed? ${this.isPreFundingUpdateNeeded(nextProps)}`);
+  }
+
+  componentWillUpdate(nextProps) {
+    console.log("componentWillUpdate");
+    console.log(`Is PreFunding update needed? ${this.isPreFundingUpdateNeeded(nextProps)}`);
+  }
+
+  isPreFundingUpdateNeeded(nextProps) {
+    console.log("New value", nextProps.form.getFieldValue('oracleQueryRepeatSeconds'));
+    console.log("Old value", this.props.form.getFieldValue('oracleQueryRepeatSeconds'));
+
+    // Update PreFunding whenever Oracle data source, callback repeat or expiration changes
+    return (nextProps.form.getFieldValue('oracleDataSource') !== this.props.form.getFieldValue('oracleDataSource'))
+        || (nextProps.form.getFieldValue('oracleQueryRepeatSeconds') !== this.props.form.getFieldValue('oracleQueryRepeatSeconds'))
+        || (nextProps.form.getFieldValue('expirationTimeStamp') !== this.props.form.getFieldValue('expirationTimeStamp'));
+  }
+
+  handlePreFunding = (event) => {
+    event.preventDefault();
+    console.log("onFormChange");
   }
 
   handleReset(event) {
@@ -109,7 +131,7 @@ class QuickDeployment extends Component {
           }
         />
         <div className="page">
-          <Form onSubmit={this.handleDeploy.bind(this)} layout="vertical">
+          <Form onSubmit={this.handleDeploy.bind(this)} onChange={this.handlePreFunding.bind(this)} layout="vertical">
             <ContractFormRow>
               <ContractFormCol>
                 <Field name='contractName' initialValue={initialValues.contractName} form={this.props.form} showHint/>

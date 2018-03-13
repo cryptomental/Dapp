@@ -40,6 +40,7 @@ class GuidedDeployment extends Component {
       oracleDataSource: '',
       oracleQuery: '',
       oracleQueryRepeatSeconds: 86400, //default to daily queries.
+      preFunding: 0,
     };
   }
 
