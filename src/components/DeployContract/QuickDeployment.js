@@ -58,12 +58,15 @@ class QuickDeployment extends Component {
       }
     }
     console.log("componentWillReceiveProps");
-    console.log(`Is PreFunding update needed? ${this.isPreFundingUpdateNeeded(nextProps)}`);
+    console.log("nextProps.oracleQueryRepeatSeconds", nextProps.form.getFieldValue('oracleQueryRepeatSeconds'));
+    console.log("this.props.oracleQueryRepeatSeconds", this.props.form.getFieldValue('oracleQueryRepeatSeconds'));
   }
 
   componentWillUpdate(nextProps) {
     console.log("componentWillUpdate");
-    console.log(`Is PreFunding update needed? ${this.isPreFundingUpdateNeeded(nextProps)}`);
+    console.log("nextProps.oracleQueryRepeatSeconds", nextProps.form.getFieldValue('oracleQueryRepeatSeconds'));
+    console.log("this.props.oracleQueryRepeatSeconds", this.props.form.getFieldValue('oracleQueryRepeatSeconds'));
+
   }
 
   isPreFundingUpdateNeeded(nextProps) {
