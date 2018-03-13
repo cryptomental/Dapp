@@ -284,7 +284,7 @@ const fieldSettingsByName = {
         }
       ];
     },
-    extra: `The contract must be funded to be able to cover cost of Oraclize queries. Price of a single query depends on data source type.`,
+    extra: `Suggested payable gas amount in order to ensure contract creation for successful deployment and future query execution based on Oraclize.it pricing.`,
 
     component: ({ form }) => {
       return (
