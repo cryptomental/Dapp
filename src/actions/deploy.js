@@ -133,7 +133,6 @@ export function handlePreFunding(
 
   return function(dispatch) {
     dispatch({ type: `${type}_PENDING` });
-    let preFundingAmount = 0;
 
     console.log(changedValues);
     console.log(contractData);
@@ -150,9 +149,10 @@ export function handlePreFunding(
             console.log(queryTestInstance);
             console.log("oracleDataSource", contractData['oracleDataSource']);
             try {
-              const queryCost = await queryTestInstance.getQueryCost(contractData['oracleDataSource']);
-              console.log(queryCost);
-              dispatch({ type: `${type}_FULFILLED`, payload: preFundingAmount });
+              queryTestInstance.getQueryCost.call(contractData['oracleDataSource']).then(function(result) {
+                  console.log(result);
+                  dispatch({ type: `${type}_FULFILLED`, payload: result.toNumber() });
+              });
             } catch (err) {
               dispatch({ type: `${type}_REJECTED`, payload: {'error': err} });
             }
