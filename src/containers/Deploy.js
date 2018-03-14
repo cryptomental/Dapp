@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 
 import Contracts from '../Contracts.js';
-import { deployContract } from '../actions/deploy';
+import { deployContract, handlePreFunding } from '../actions/deploy';
 import DeployContractForm from '../components/DeployContract/DeployContractForm';
 import store from '../store';
 
@@ -23,7 +23,13 @@ const mapDispatchToProps = dispatch => {
         contractSpecs
       }, Contracts));
     },
-
+    onHandlePreFunding: (changedValues, contractData) => {
+      dispatch(handlePreFunding({
+        web3: store.getState().web3.web3Instance,
+        changedValues,
+        contractData,
+      }, Contracts));
+    },
   };
 };
 

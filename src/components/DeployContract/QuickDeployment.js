@@ -57,26 +57,6 @@ class QuickDeployment extends Component {
         this.props.showSuccessMessage(DeployContractSuccess({ contract: nextProps.contract }), 5);
       }
     }
-    console.log("componentWillReceiveProps");
-    console.log("nextProps.oracleQueryRepeatSeconds", nextProps.form.getFieldValue('oracleQueryRepeatSeconds'));
-    console.log("this.props.oracleQueryRepeatSeconds", this.props.form.getFieldValue('oracleQueryRepeatSeconds'));
-  }
-
-  componentWillUpdate(nextProps) {
-    console.log("componentWillUpdate");
-    console.log("nextProps.oracleQueryRepeatSeconds", nextProps.form.getFieldValue('oracleQueryRepeatSeconds'));
-    console.log("this.props.oracleQueryRepeatSeconds", this.props.form.getFieldValue('oracleQueryRepeatSeconds'));
-
-  }
-
-  isPreFundingUpdateNeeded(nextProps) {
-    console.log("New value", nextProps.form.getFieldValue('oracleQueryRepeatSeconds'));
-    console.log("Old value", this.props.form.getFieldValue('oracleQueryRepeatSeconds'));
-
-    // Update PreFunding whenever Oracle data source, callback repeat or expiration changes
-    return (nextProps.form.getFieldValue('oracleDataSource') !== this.props.form.getFieldValue('oracleDataSource'))
-        || (nextProps.form.getFieldValue('oracleQueryRepeatSeconds') !== this.props.form.getFieldValue('oracleQueryRepeatSeconds'))
-        || (nextProps.form.getFieldValue('expirationTimeStamp') !== this.props.form.getFieldValue('expirationTimeStamp'));
   }
 
   handlePreFunding = (event) => {
@@ -215,4 +195,15 @@ class QuickDeployment extends Component {
   }
 }
 
-export default Form.create()(QuickDeployment);
+export default Form.create({
+  onValuesChange(props, values, contractData) {
+    const triggers = ['oracleDataSource',
+                      'oracleQueryRepeatSeconds',
+                      'expirationTimeStamp'];
+    for (const v in values) {
+      if (triggers.includes(v)) {
+        props.onHandlePreFunding(values, contractData);
+      }
+    }
+  },
+})(QuickDeployment);

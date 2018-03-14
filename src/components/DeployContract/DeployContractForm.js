@@ -11,6 +11,10 @@ class DeployContractForm extends Component {
     this.props.onDeployContract(values);
   }
 
+  handlePreFundingUpdate = () => {
+    console.log("handlePreFundingUpdate");
+  }
+
   getQuickDeploymentComponent(props) {
     return <QuickDeployment
               {...props} {...this.props}
@@ -20,7 +24,7 @@ class DeployContractForm extends Component {
   }
 
   getGuidedDeploymentComponent(props) {
-    return <GuidedDeployment 
+    return <GuidedDeployment
               {...props}  {...this.props}
               onDeployContract={this.handleDeploy} />;
   }
@@ -28,10 +32,10 @@ class DeployContractForm extends Component {
   computeChildrenProps() {
     const location = this.props.location;
     const queryParams = qs.parse(location.search);
-    const { 
+    const {
       mode = 'quick' // defaults to QuickDeployment
     } = queryParams;
-    
+
     // for linking to quick/guided mode inside children components
     // the url is added to make it more accessible to copy links to clipboard
     const guidedModeUrl = `${location.pathname}?${qs.stringify({ ...queryParams, mode: 'guided' })}`;
@@ -43,10 +47,10 @@ class DeployContractForm extends Component {
 
   render() {
     const props = this.computeChildrenProps();
-    const mode = props.mode;    
+    const mode = props.mode;
 
-    return (mode === "guided") ? this.getGuidedDeploymentComponent(props) 
-      : (mode === "quick") ? this.getQuickDeploymentComponent(props) 
+    return (mode === "guided") ? this.getGuidedDeploymentComponent(props)
+      : (mode === "quick") ? this.getQuickDeploymentComponent(props)
       : this.getQuickDeploymentComponent(props);
   }
 }

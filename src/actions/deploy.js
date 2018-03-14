@@ -124,3 +124,44 @@ export function deployContract(
     }
   };
 }
+
+export function handlePreFunding(
+  { web3, changedValues, contractData },
+  { QueryTest },
+) {
+  const type = 'CALCULATE_PREFUNDING';
+
+  return function(dispatch) {
+    dispatch({ type: `${type}_PENDING` });
+    let preFundingAmount = 0;
+
+    console.log(changedValues);
+    console.log(contractData);
+
+    if (web3 && typeof web3 !== 'undefined') {
+      if (contractData['oracleDataSource']
+        && contractData['oracleQueryRepeatSeconds']
+        && contractData['expirationTimeStamp']) {
+
+          const queryTest = contract(QueryTest);
+          queryTest.setProvider(web3.currentProvider);
+
+          queryTest.deployed().then(async function(queryTestInstance) {
+            console.log(queryTestInstance);
+            console.log("oracleDataSource", contractData['oracleDataSource']);
+            try {
+              const queryCost = await queryTestInstance.getQueryCost(contractData['oracleDataSource']);
+              console.log(queryCost);
+              dispatch({ type: `${type}_FULFILLED`, payload: preFundingAmount });
+            } catch (err) {
+              dispatch({ type: `${type}_REJECTED`, payload: {'error': err} });
+            }
+          });
+      } else {
+        dispatch({ type: `${type}_REJECTED`, payload: {'error': 'Not all required fields defined'} });
+      }
+    } else {
+      dispatch({ type: `${type}_REJECTED`, payload: {'error': 'Web3 not initialised'} });
+    }
+  };
+}
