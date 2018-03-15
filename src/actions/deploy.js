@@ -1,4 +1,5 @@
 import contract from 'truffle-contract';
+import moment from 'moment';
 
 export function deployContract(
   { web3, contractSpecs },
@@ -66,7 +67,7 @@ export function deployContract(
               contractSpecs.oracleQueryRepeatSeconds,
               {
                 gas: 6385876, // TODO : Remove hard-coded gas
-                value: web3.toWei('.05', 'ether'),
+                value: contractSpecs.preFunding,
                 gasPrice: web3.toWei(0.1, 'gwei'),
                 from: coinbase,
                 nonce: wnonce
@@ -149,9 +150,17 @@ export function handlePreFunding(
             console.log(queryTestInstance);
             console.log("oracleDataSource", contractData['oracleDataSource']);
             try {
-              queryTestInstance.getQueryCost.call(contractData['oracleDataSource']).then(function(result) {
-                  console.log(result);
-                  dispatch({ type: `${type}_FULFILLED`, payload: result.toNumber() });
+              queryTestInstance.getQueryCost.call(contractData['oracleDataSource']).then(function(costPerQuery) {
+                  console.log("Cost per query in WEI", costPerQuery.toNumber());
+                  const now = moment();
+                  console.log("Now", now.format());
+                  console.log("Contract expiration", contractData['expirationTimeStamp'].format());
+                  const secondsToExpiration = moment.duration(contractData['expirationTimeStamp'].diff(now)).asSeconds();
+                  console.log("Seconds to expiration", secondsToExpiration);
+                  const expectedNumberOfQueries = Math.floor(secondsToExpiration / contractData['oracleQueryRepeatSeconds']);
+                  console.log("Expected number of queries", expectedNumberOfQueries);
+                  const approxGasRequired = costPerQuery * expectedNumberOfQueries;
+                  dispatch({ type: `${type}_FULFILLED`, payload: approxGasRequired });
               });
             } catch (err) {
               dispatch({ type: `${type}_REJECTED`, payload: {'error': err} });

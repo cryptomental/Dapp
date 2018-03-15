@@ -55,13 +55,17 @@ class QuickDeployment extends Component {
       } else if (nextProps.contract) {
         // Contract was deployed
         this.props.showSuccessMessage(DeployContractSuccess({ contract: nextProps.contract }), 5);
+      } else if (nextProps.prefunding) {
+        // PreFunding was recalculated
+        this.props.form.setFieldsValue({preFunding: nextProps.prefunding});
       }
     }
   }
 
   handlePreFunding = (event) => {
     event.preventDefault();
-    console.log("onFormChange");
+    console.log("onFormChange", this.props.prefunding);
+    this.props.form.setFieldsValue({preFunding: this.props.prefunding});
   }
 
   handleReset(event) {

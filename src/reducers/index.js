@@ -5,6 +5,7 @@ import web3Reducer from '../util/web3/web3Reducer';
 import deploy from './deploy';
 import explorer from './explorer';
 import find from './find';
+import prefunding from './prefunding';
 import testQuery from './testQuery';
 
 export default combineReducers({
@@ -13,5 +14,6 @@ export default combineReducers({
   find: find,
   deploy: deploy,
   explorer: explorer,
+  prefunding: prefunding,
   testQuery: testQuery,
 });
