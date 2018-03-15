@@ -208,7 +208,6 @@ const fieldSettingsByName = {
       }
     ],
     extra: 'Expiration timestamp for all open positions to settle.',
-
     component: () => (<DatePicker showTime format="YYYY-MM-DD HH:mm:ss" style={{ width: '100%' }} />)
   },
 

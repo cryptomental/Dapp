@@ -8,12 +8,13 @@ import store from '../store';
 const mapStateToProps = state => {
   const { loading, error, contract } = state.deploy;
   const { prefunding } = state.prefunding;
-
+  const prefunding_loading = state.prefunding.loading;
   return {
     loading,
     error,
     contract,
     prefunding,
+    prefunding_loading,
   };
 };
 

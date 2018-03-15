@@ -12,6 +12,7 @@ export default function reducer(
       return {
         ...state,
         loading: true,
+        prefunding: null,
         error: null,
       };
 

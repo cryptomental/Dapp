@@ -55,11 +55,12 @@ class QuickDeployment extends Component {
       } else if (nextProps.contract) {
         // Contract was deployed
         this.props.showSuccessMessage(DeployContractSuccess({ contract: nextProps.contract }), 5);
-      } else if (nextProps.prefunding) {
+      };
+    };
+    if (this.props.prefunding_loading && !nextProps.prefunding_loading) {
         // PreFunding was recalculated
         this.props.form.setFieldsValue({preFunding: nextProps.prefunding});
-      }
-    }
+      };
   }
 
   handlePreFunding = (event) => {
@@ -118,7 +119,7 @@ class QuickDeployment extends Component {
           }
         />
         <div className="page">
-          <Form onSubmit={this.handleDeploy.bind(this)} onChange={this.handlePreFunding.bind(this)} layout="vertical">
+          <Form onSubmit={this.handleDeploy.bind(this)} onChange={this.handlePreFunding} layout="vertical">
             <ContractFormRow>
               <ContractFormCol>
                 <Field name='contractName' initialValue={initialValues.contractName} form={this.props.form} showHint/>
