@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import Loader from '../Loader';
 import Field from './DeployContractField';
 import DeployContractSuccess from './DeployContractSuccess';
+import web3 from 'web3-utils';
 
 const formButtonLayout = {
   xs: {
@@ -59,14 +60,14 @@ class QuickDeployment extends Component {
     };
     if (this.props.prefunding_loading && !nextProps.prefunding_loading) {
         // PreFunding was recalculated
-        this.props.form.setFieldsValue({preFunding: nextProps.prefunding});
+        this.props.form.setFieldsValue({preFunding: web3.fromWei(nextProps.prefunding, 'ether')});
       };
   }
 
   handlePreFunding = (event) => {
     event.preventDefault();
     console.log("onFormChange", this.props.prefunding);
-    this.props.form.setFieldsValue({preFunding: this.props.prefunding});
+
   }
 
   handleReset(event) {

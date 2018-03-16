@@ -1,5 +1,6 @@
 import contract from 'truffle-contract';
 import moment from 'moment';
+import { BigNumber } from 'bignumber.js';
 
 export function deployContract(
   { web3, contractSpecs },
@@ -150,17 +151,22 @@ export function handlePreFunding(
             console.log(queryTestInstance);
             console.log("oracleDataSource", contractData['oracleDataSource']);
             try {
-              queryTestInstance.getQueryCost.call(contractData['oracleDataSource']).then(function(costPerQuery) {
+              queryTestInstance.getQueryCost.call(contractData['oracleDataSource']).then(async function(costPerQuery) {
+                  const oraclizeCallbackGas = await queryTestInstance.QUERY_CALLBACK_GAS.call();
                   console.log("Cost per query in WEI", costPerQuery.toNumber());
+                  console.log("oraclizeCallbackGasNeeded", oraclizeCallbackGas.toNumber());
                   const now = moment();
                   console.log("Now", now.format());
                   console.log("Contract expiration", contractData['expirationTimeStamp'].format());
                   const secondsToExpiration = moment.duration(contractData['expirationTimeStamp'].diff(now)).asSeconds();
                   console.log("Seconds to expiration", secondsToExpiration);
-                  const expectedNumberOfQueries = Math.floor(secondsToExpiration / contractData['oracleQueryRepeatSeconds']);
+                  const expectedNumberOfQueries = new BigNumber(Math.floor(secondsToExpiration / contractData['oracleQueryRepeatSeconds']));
                   console.log("Expected number of queries", expectedNumberOfQueries);
-                  const approxGasRequired = costPerQuery * expectedNumberOfQueries;
-                  dispatch({ type: `${type}_FULFILLED`, payload: approxGasRequired });
+                  console.log(costPerQuery);
+                  console.log(oraclizeCallbackGas);
+                  const approxGasRequired = costPerQuery * expectedNumberOfQueries + oraclizeCallbackGas * expectedNumberOfQueries;
+                  console.log(approxGasRequired);
+                  dispatch({ type: `${type}_FULFILLED`, payload: approxGasRequired.toString() });
               });
             } catch (err) {
               dispatch({ type: `${type}_REJECTED`, payload: {'error': err} });
