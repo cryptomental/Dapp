@@ -175,7 +175,7 @@ class QuickDeployment extends Component {
 
             <ContractFormRow>
               <ContractFormCol>
-                <Field name='preFunding' initialValue={parseInt(initialValues.preFunding, 10)} form={this.props.form} showHint/>
+                <Field name='preFunding' initialValue={isNaN(initialValues.preFunding) ? '' : parseInt(initialValues.preFunding, 10)} form={this.props.form} showHint/>
               </ContractFormCol>
             </ContractFormRow>
 
