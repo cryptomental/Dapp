@@ -1,4 +1,6 @@
 import contract from 'truffle-contract';
+import moment from 'moment';
+import { BigNumber } from 'bignumber.js';
 
 export function deployContract(
   { web3, contractSpecs },
@@ -57,10 +59,10 @@ export function deployContract(
               contractSpecs.oracleQuery,
               contractSpecs.oracleQueryRepeatSeconds,
               {
-                gas: 6500000, // TODO : Remove hard-coded gas
-                value: web3.toWei('.2', 'ether'),
-                gasPrice: web3.toWei(1, 'gwei'),
-                from: coinbase
+                gas: 6385876, // TODO : Remove hard-coded gas
+                value: contractSpecs.preFunding,
+                gasPrice: web3.toWei(0.1, 'gwei'),
+                from: coinbase,
               }
             );
           })
@@ -98,6 +100,60 @@ export function deployContract(
             dispatch({ type: `${type}_REJECTED`, payload: err });
           });
       });
+    } else {
+      dispatch({ type: `${type}_REJECTED`, payload: {'error': 'Web3 not initialised'} });
+    }
+  };
+}
+
+export function handlePreFunding(
+  { web3, changedValues, contractData },
+  { QueryTest },
+) {
+  const type = 'CALCULATE_PREFUNDING';
+
+  return function(dispatch) {
+    dispatch({ type: `${type}_PENDING` });
+
+    console.log(changedValues);
+    console.log(contractData);
+
+    if (web3 && typeof web3 !== 'undefined') {
+      if (contractData['oracleDataSource']
+        && contractData['oracleQueryRepeatSeconds']
+        && contractData['expirationTimeStamp']) {
+
+          const queryTest = contract(QueryTest);
+          queryTest.setProvider(web3.currentProvider);
+
+          queryTest.deployed().then(async function(queryTestInstance) {
+            console.log(queryTestInstance);
+            console.log("oracleDataSource", contractData['oracleDataSource']);
+            try {
+              queryTestInstance.getQueryCost.call(contractData['oracleDataSource']).then(async function(costPerQuery) {
+                  const oraclizeCallbackGas = await queryTestInstance.QUERY_CALLBACK_GAS.call();
+                  console.log("Cost per query in WEI", costPerQuery.toNumber());
+                  console.log("oraclizeCallbackGasNeeded", oraclizeCallbackGas.toNumber());
+                  const now = moment();
+                  console.log("Now", now.format());
+                  console.log("Contract expiration", contractData['expirationTimeStamp'].format());
+                  const secondsToExpiration = moment.duration(contractData['expirationTimeStamp'].diff(now)).asSeconds();
+                  console.log("Seconds to expiration", secondsToExpiration);
+                  const expectedNumberOfQueries = new BigNumber(Math.floor(secondsToExpiration / contractData['oracleQueryRepeatSeconds']));
+                  console.log("Expected number of queries", expectedNumberOfQueries);
+                  console.log(costPerQuery);
+                  console.log(oraclizeCallbackGas);
+                  const approxGasRequired = costPerQuery * expectedNumberOfQueries + oraclizeCallbackGas * expectedNumberOfQueries;
+                  console.log(approxGasRequired);
+                  dispatch({ type: `${type}_FULFILLED`, payload: approxGasRequired.toString() });
+              });
+            } catch (err) {
+              dispatch({ type: `${type}_REJECTED`, payload: {'error': err} });
+            }
+          });
+      } else {
+        dispatch({ type: `${type}_REJECTED`, payload: {'error': 'Not all required fields defined'} });
+      }
     } else {
       dispatch({ type: `${type}_REJECTED`, payload: {'error': 'Web3 not initialised'} });
     }
