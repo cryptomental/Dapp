@@ -62,7 +62,7 @@ class QuickDeployment extends Component {
         // PreFunding was recalculated
         // PreFunding gas amount (props.prefunding) needs to be multiplied by gas price
         // to get ETH value to be paid for the transaction
-        this.props.form.setFieldsValue({preFunding: web3.fromWei(nextProps.prefunding, 'wei')});
+        this.props.form.setFieldsValue({preFunding: parseInt(web3.fromWei(nextProps.prefunding, 'wei'), 10)});
       };
   }
 
