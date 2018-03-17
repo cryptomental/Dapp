@@ -45,7 +45,7 @@ function ContractFormCol(props) {
 
 /**
  * Component for deploying Contracts Quickly.
- * 
+ *
  */
 class QuickDeployment extends Component {
   componentWillReceiveProps(nextProps) {
@@ -60,7 +60,9 @@ class QuickDeployment extends Component {
     };
     if (this.props.prefunding_loading && !nextProps.prefunding_loading) {
         // PreFunding was recalculated
-        this.props.form.setFieldsValue({preFunding: web3.fromWei(nextProps.prefunding, 'ether')});
+        // PreFunding gas amount (props.prefunding) needs to be multiplied by gas price
+        // to get ETH value to be paid for the transaction
+        this.props.form.setFieldsValue({preFunding: web3.fromWei(nextProps.prefunding, 'wei')});
       };
   }
 
