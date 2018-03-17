@@ -6,6 +6,7 @@ import deploy from './deploy';
 import explorer from './explorer';
 import find from './find';
 import simExchange from './simExchange';
+import prefunding from './prefunding';
 import testQuery from './testQuery';
 
 export default combineReducers({
@@ -15,5 +16,6 @@ export default combineReducers({
   deploy: deploy,
   explorer: explorer,
   simExchange: simExchange,
+  prefunding: prefunding,
   testQuery: testQuery,
 });
