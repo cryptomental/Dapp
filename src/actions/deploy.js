@@ -61,7 +61,7 @@ export function deployContract(
               {
                 gas: 6385876, // TODO : Remove hard-coded gas
                 value: contractSpecs.preFunding,
-                gasPrice: web3.toWei(0.1, 'gwei'),
+                gasPrice: web3.toWei(1, 'gwei'),
                 from: coinbase,
               }
             );
