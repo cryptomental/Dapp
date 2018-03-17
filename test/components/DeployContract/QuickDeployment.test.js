@@ -8,7 +8,7 @@ import moment from 'moment';
 import QuickDeployment from '../../../src/components/DeployContract/QuickDeployment';
 
 function validContractFields() {
-  return { 
+  return {
     contractName: { value: 'ABA' },
     baseTokenAddress: { value: '0x33333' },
     priceFloor: { value: 0 },
@@ -18,7 +18,8 @@ function validContractFields() {
     expirationTimeStamp: { value: moment().add(1, 'days') }, // always in the future
     oracleDataSource: { value: 'URL' },
     oracleQuery: { value: 'json(https://api.gdax.com/products/BTC-USD/ticker).price' },
-    oracleQueryRepeatSeconds: { value: 86400 }
+    oracleQueryRepeatSeconds: { value: 86400 },
+    preFunding: { value: 18831000000900000 }
   };
 }
 
@@ -35,9 +36,9 @@ describe('QuickDeployment', () => {
     onDeploySpy = sinon.spy();
     successMessageSpy = sinon.spy();
     errorMessageSpy = sinon.spy();
-    quickDeployment = mount(<QuickDeployment 
-      initialValues={{}} 
-      switchMode={switchModeSpy} 
+    quickDeployment = mount(<QuickDeployment
+      initialValues={{}}
+      switchMode={switchModeSpy}
       showErrorMessage={errorMessageSpy}
       showSuccessMessage={successMessageSpy}
       onDeployContract={onDeploySpy}
@@ -110,7 +111,7 @@ describe('QuickDeployment', () => {
 
   it('should reset form when .reset-button is clicked', () => {
     const defaultFieldValues = wrappedFormRef.props.form.getFieldsValue();
-    wrappedFormRef.props.form.setFields(validContractFields());    
+    wrappedFormRef.props.form.setFields(validContractFields());
     quickDeployment.setProps({
       loading: false
     });
@@ -124,7 +125,7 @@ describe('QuickDeployment', () => {
 
   it('should call onDeployContract with form values when submitted', () => {
     wrappedFormRef.props.form.setFields(validContractFields());
-    
+
     quickDeployment.find(Form).first().simulate('submit', { preventDefault() {} });
     expect(onDeploySpy).to.have.property('callCount', 1);
     // TODO: Test the values passed to onDeployContract
