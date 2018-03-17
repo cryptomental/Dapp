@@ -34,6 +34,13 @@ const priceCapValidator = (form, rule, value, callback) => {
   callback(value >= priceFloor ? undefined : 'Price cap must be greater-than or equal to the price floor');
 };
 
+const preFundingValidator = (form, rule, value, callback) => {
+  const preFunding = form.getFieldValue('preFunding');
+
+  callback(value >= preFunding ? undefined : 'Fre-funding must be higher than the minimum value that allows to cover Oraclize queries.');
+};
+
+
 const oracleQueryValidator = (form, rule, value, callback) => {
   const oracleDataSource = form.getFieldValue('oracleDataSource');
   const oracleQuery = form.getFieldValue('oracleQuery');
@@ -258,6 +265,41 @@ const fieldSettingsByName = {
     extra: `Number of seconds in between repeating the oracle query.`,
 
     component: () => (<InputNumber min={0} style={{ width: '100%' }}/>)
+  },
+
+  preFunding: {
+    label: 'Pre-Funding',
+    initialValue: 0,
+    rules: (form) => {
+      return [
+        {
+          required: true, message: 'Please enter pre-funding [ETH] for the contract.',
+        },
+        {
+          type: 'integer', message: 'Value must be an integer'
+        },
+        {
+          validator: (rule, value, callback) => {
+            preFundingValidator(form, rule, value, callback);
+          },
+        }
+      ];
+    },
+    extra: `Suggested payable gas amount in order to ensure contract creation for successful deployment and future query execution based on Oraclize.it pricing.`,
+
+    component: ({ form }) => {
+      return (
+        <InputNumber
+          min={0}
+          style={{ width: '100%' }}
+          onChange={() => {
+            setTimeout(() => {
+              form.validateFields(['preFunding'], { force: true });
+            }, 100);
+          }}
+        />
+      );
+    }
   },
 };
 

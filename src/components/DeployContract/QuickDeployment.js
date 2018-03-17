@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import Loader from '../Loader';
 import Field from './DeployContractField';
 import DeployContractSuccess from './DeployContractSuccess';
+import web3 from 'web3-utils';
 
 const formButtonLayout = {
   xs: {
@@ -55,8 +56,18 @@ class QuickDeployment extends Component {
       } else if (nextProps.contract) {
         // Contract was deployed
         this.props.showSuccessMessage(DeployContractSuccess({ contract: nextProps.contract }), 5);
-      }
-    }
+      };
+    };
+    if (this.props.prefunding_loading && !nextProps.prefunding_loading) {
+        // PreFunding was recalculated
+        this.props.form.setFieldsValue({preFunding: web3.fromWei(nextProps.prefunding, 'ether')});
+      };
+  }
+
+  handlePreFunding = (event) => {
+    event.preventDefault();
+    console.log("onFormChange", this.props.prefunding);
+
   }
 
   handleReset(event) {
@@ -109,7 +120,7 @@ class QuickDeployment extends Component {
           }
         />
         <div className="page">
-          <Form onSubmit={this.handleDeploy.bind(this)} layout="vertical">
+          <Form onSubmit={this.handleDeploy.bind(this)} onChange={this.handlePreFunding} layout="vertical">
             <ContractFormRow>
               <ContractFormCol>
                 <Field name='contractName' initialValue={initialValues.contractName} form={this.props.form} showHint/>
@@ -160,6 +171,12 @@ class QuickDeployment extends Component {
               </ContractFormCol>
             </ContractFormRow>
 
+            <ContractFormRow>
+              <ContractFormCol>
+                <Field name='preFunding' initialValue={parseInt(initialValues.preFunding, 10)} form={this.props.form} showHint/>
+              </ContractFormCol>
+            </ContractFormRow>
+
             <Row type="flex" justify="center">
               <Col {...formButtonLayout}>
                 <Button className="submit-button" type="primary" htmlType="submit" loading={this.props.loading} disabled={this.isSubmitDisabled()} style={{width: '100%'}}>
@@ -184,4 +201,15 @@ class QuickDeployment extends Component {
   }
 }
 
-export default Form.create()(QuickDeployment);
+export default Form.create({
+  onValuesChange(props, values, contractData) {
+    const triggers = ['oracleDataSource',
+                      'oracleQueryRepeatSeconds',
+                      'expirationTimeStamp'];
+    for (const v in values) {
+      if (triggers.includes(v)) {
+        props.onHandlePreFunding(values, contractData);
+      }
+    }
+  },
+})(QuickDeployment);

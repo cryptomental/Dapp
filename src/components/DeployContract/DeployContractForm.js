@@ -11,6 +11,10 @@ class DeployContractForm extends Component {
     this.props.onDeployContract(values);
   }
 
+  handlePreFundingUpdate = () => {
+    console.log("handlePreFundingUpdate");
+  }
+
   getQuickDeploymentComponent(props) {
     return <QuickDeployment
               {...props} {...this.props}
